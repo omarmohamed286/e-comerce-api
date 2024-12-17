@@ -1,24 +1,27 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const morgan = require('morgan')
-const mongoose = require('mongoose')
+const express = require("express");
+const dotenv = require("dotenv");
+const morgan = require("morgan");
+const dbConnection = require("./config/database");
+const categoryRoute = require("./routes/categoryRoute");
 
-dotenv.config({path:"config.env"})
-mongoose.connect(process.env.DB_URI)
+dotenv.config({ path: "config.env" });
 
-const app = express()
+dbConnection();
 
-const PORT = process.env.PORT || 8000
+const app = express();
 
-if(process.env.NODE_ENV == 'Development'){
-    app.use(morgan('dev'))
-    console.log(`Mode: ${process.env.NODE_ENV}`)
+const PORT = process.env.PORT || 8000;
+
+app.use(express.json());
+
+if (process.env.NODE_ENV == "Development") {
+  app.use(morgan("dev"));
+  console.log(`Mode: ${process.env.NODE_ENV}`);
 }
 
-app.get('/',(req,res)=>{
-    res.send('Hello world')
-})
 
-app.listen(PORT,()=>{
-    console.log(`App is running on port: ${PORT}`)
-})
+app.use("/api/v1/categories", categoryRoute);
+
+app.listen(PORT, () => {
+  console.log(`App is running on port: ${PORT}`);
+});
