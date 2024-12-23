@@ -10,11 +10,9 @@ const categorySchema = new mongoose.Schema(
       maxlength: [32, "Too long category name"],
     },
     slug: { type: String, lowercase: true },
-    image:String
+    image: String,
   },
   { timestamps: true }
 );
 
-const CategoryModel = mongoose.model("Category", categorySchema);
-
-module.exports = CategoryModel;
+module.exports = mongoose.model("Category", categorySchema);
