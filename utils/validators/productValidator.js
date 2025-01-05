@@ -9,7 +9,11 @@ exports.createProductValidator = [
     .isLength({ min: 3 })
     .withMessage("must be at least 3 chars")
     .notEmpty()
-    .withMessage("Product required"),
+    .withMessage("Product required")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   check("description")
     .notEmpty()
     .withMessage("Product description is required")
@@ -77,12 +81,12 @@ exports.createProductValidator = [
             return Promise.reject(new Error(`Invalid subcategories Ids`));
           }
         }
-      ) 
+      )
     )
     .custom((val, { req }) =>
       SubCategory.find({ category: req.body.category }, { _id: 1 }).then(
         (subcategoriesIds) => {
-          subcategoriesIds = subcategoriesIds.map(obj => obj._id.toString());
+          subcategoriesIds = subcategoriesIds.map((obj) => obj._id.toString());
           const checker = (target, arr) => target.every((v) => arr.includes(v));
           if (!checker(val, subcategoriesIds)) {
             return Promise.reject(
@@ -116,7 +120,12 @@ exports.getProductValidator = [
 
 exports.updateProductValidator = [
   check("id").isMongoId().withMessage("Invalid ID formate"),
-  check("title").optional(),
+  check("title")
+    .optional()
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   validatorMiddleware,
 ];
 
