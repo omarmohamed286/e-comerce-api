@@ -1,3 +1,5 @@
+const path = require("path")
+
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
@@ -20,6 +22,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname,'uploads')))
 
 if (process.env.NODE_ENV == "Development") {
   app.use(morgan("dev"));
